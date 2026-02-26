@@ -54,3 +54,17 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment variants
+.env.*
+!.env.example
+
+# Databases
+*.sqlite
+*.db
+
+# Local configs
+*.local
