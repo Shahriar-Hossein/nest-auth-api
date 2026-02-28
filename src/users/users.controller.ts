@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './users.service.js';
 
 @Controller('users')
 export class UsersController {
@@ -37,6 +37,8 @@ export class UsersController {
 
   @Post()
   createUser(@Body() body: any){
+    console.log(body);
+    
     return this.usersService.createUser(body);
   }
 }
