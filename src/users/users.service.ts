@@ -6,46 +6,48 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  private users = [
-    { id: 1, name: 'John', email: 'john@test.com' },
-    { id: 2, name: 'sarah', email: 'sarah@test.com' },
-  ];
-
   findAll() {
-    return this.users;
+    return this.prisma.user.findMany();
   }
 
   findOne(id: number) {
-    return this.users.find((user) => user.id === id);
+    return this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
   updateUser(id: number, data: any) {
-    const user = this.users.find((user) => user.id === id);
+    const user = this.prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
 
     if (!user) {
       return null;
     }
-
-    user.name = data.name;
-    user.email = data.email;
 
     return user;
   }
 
   deleteUser(id: number) {
-    const user = this.users.find((user) => user.id === id);
+    const user = this.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
 
     if (!user) {
       return null;
     }
 
-    this.users = this.users.filter((user) => user.id !== id);
-
     return user;
   }
 
   async createUser(data: any) {
-
     // check if user exists
     const existingUser = await this.prisma.user.findUnique({
       where: {
@@ -66,8 +68,7 @@ export class UsersService {
         password: hashedPassword,
       },
     });
-
-    return user;
+    const { password, ...result } = user;
+    return result;
   }
-  
 }
