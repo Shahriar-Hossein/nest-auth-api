@@ -34,6 +34,18 @@ export class UsersService {
     });
   }
 
+  // for login user can input either username or email, search by both and find first.
+  findOneByEmailOrUsername(identifier: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { username: identifier },
+        ]
+      },
+    });
+  }
+
   updateUser(id: number, data: any) {
     const user = this.prisma.user.update({
       where: {
@@ -65,21 +77,31 @@ export class UsersService {
 
   async createUser(data: any) {
     // check if user exists
-    const existingUser = await this.prisma.user.findUnique({
+    const existingUser = await this.prisma.user.findFirst({
       where: {
-        email: data.email,
+        OR: [
+          { email: data.email },
+          { username: data.username },
+        ]
       },
     });
 
     if (existingUser) {
-      throw new Error('User already exists');
+      if (existingUser.email === data.email) {
+        throw new Error('Email already exists');
+      }
+      if (existingUser.username === data.username) {
+        throw new Error('Username already exists');
+      }
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await this.prisma.user.create({
       data: {
-        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
         email: data.email,
         password: hashedPassword,
       },

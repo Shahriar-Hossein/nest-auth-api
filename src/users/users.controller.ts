@@ -16,7 +16,7 @@ export class UsersController {
   getUser(@Param('id') id: string){
     console.log(id);
     
-    return this.usersService.findOne(Number(id));
+    return this.usersService.findOneById(Number(id));
   }
 
   @Patch(':id')
