@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '../generated/prisma/client.js';
 
 @Injectable()
 export class UsersService {
@@ -46,8 +47,8 @@ export class UsersService {
     });
   }
 
-  updateUser(id: number, data: any) {
-    const user = this.prisma.user.update({
+  async updateUser(id: number, data: Prisma.UserUpdateInput) {
+    const user = await this.prisma.user.update({
       where: {
         id,
       },
@@ -55,14 +56,15 @@ export class UsersService {
     });
 
     if (!user) {
-      return null;
+      throw new Error('User not found');
     }
 
-    return user;
+    const { password, ...result } = user;
+    return result;
   }
 
-  deleteUser(id: number) {
-    const user = this.prisma.user.delete({
+  async deleteUser(id: number) {
+    const user = await this.prisma.user.delete({
       where: {
         id,
       },
@@ -72,7 +74,8 @@ export class UsersService {
       return null;
     }
 
-    return user;
+    const { password, ...result } = user;
+    return result;
   }
 
   async createUser(data: any) {

@@ -11,7 +11,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // Get /users/id
+  // GET /users/id
   @Get(':id')
   getUser(@Param('id') id: string){
     console.log(id);
@@ -19,6 +19,7 @@ export class UsersController {
     return this.usersService.findOneById(Number(id));
   }
 
+  // PATCH /users/id
   @Patch(':id')
   updateUser(
     @Param('id') id: string,
@@ -30,11 +31,13 @@ export class UsersController {
     );
   }
 
+  // DELETE /users/id
   @Delete(':id')
   deleteUser(@Param('id') id: string){
     return this.usersService.deleteUser(Number(id));
   }
 
+  // POST /users
   @Post()
   createUser(@Body() body: any){
     console.log(body);
