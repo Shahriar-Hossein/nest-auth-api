@@ -3,10 +3,14 @@ import { UsersService } from '../users/users.service.js';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto.js';
 import { RegisterDto } from './dto/register.dto.js';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async authenticate(data: LoginDto) {
     const user = await this.usersService.findOneByEmailOrUsername(
@@ -21,9 +25,18 @@ export class AuthService {
     }
     const { password, ...result } = user;
 
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      email: user.email,
+    };
+
 		// generate jwt token. @TODO implement jwt token generation.
-		// const token = this.jwtService.sign(result);
-    return result;
+		const token = await this.jwtService.sign(payload);
+    return {
+      result,
+      accessToken: token,
+    };
   }
 
 	async register(data: RegisterDto) {
