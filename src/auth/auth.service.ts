@@ -19,7 +19,10 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid username or email');
     }
-    const isPasswordValid : boolean = await bcrypt.compare(data.password, user.password);
+    const isPasswordValid: boolean = await bcrypt.compare(
+      data.password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
     }
@@ -31,16 +34,16 @@ export class AuthService {
       email: user.email,
     };
 
-		// generate jwt token. @TODO implement jwt token generation.
-		const token = await this.jwtService.sign(payload);
+    // generate jwt token. @TODO implement jwt token generation.
+    const token = await this.jwtService.sign(payload);
     return {
       result,
       accessToken: token,
     };
   }
 
-	async register(data: RegisterDto) {
-		const user = await this.usersService.createUser(data);
-		return user;
-	}
+  async register(data: RegisterDto) {
+    const user = await this.usersService.createUser(data);
+    return user;
+  }
 }
